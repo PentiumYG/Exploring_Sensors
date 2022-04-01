@@ -5,7 +5,7 @@ store them in a room database in a separate table for each sensor. Have UI
 control in terms of toggle buttons to start and stop collection. \
 a. Motion sensor - Gyroscope, Linear acceleration \
 b. Environmental sensor - Temperature, Light \
-c. Positional sensor - Proximity, Orientation \
+c. Positional sensor - Proximity, Orientation 
 ##### Note: Make sure you are collecting data only when the toggle button is ON and application is running in foreground and not when the toggle button is OFF or application is running in background/stopped. Incase your device does not have a particular sensor, pick another one from the same category.
 2. There must be two charts [Line Chart], one for displaying the last 10 values
 of proximity sensor, and other to display the last 10 average - values of
