@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     }
                 }
                 else{
-                    sensorMan.unregisterListener(MainActivity.this, sensorMan.getDefaultSensor(Sensor.TYPE_GYROSCOPE));
+                    sensorMan.unregisterListener(MainActivity.this, sensorMan.getDefaultSensor(Sensor.TYPE_LIGHT));
                     lightVal.setText("0");
                     Toast.makeText(MainActivity.this, "Light Sensor De-Activated..!", Toast.LENGTH_SHORT).show();
                 }
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(tToggle.isChecked()){
-                    Sensor temperature = sensorMan.getDefaultSensor(Sensor.TYPE_TEMPERATURE);
+                    Sensor temperature = sensorMan.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
                     if(temperature !=null){
                         sensorMan.registerListener((SensorEventListener) MainActivity.this, temperature, SensorManager.SENSOR_DELAY_NORMAL);
                         Toast.makeText(MainActivity.this, "Temperature Sensor Activated..!", Toast.LENGTH_SHORT).show();
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     }
                 }
                 else{
-                    sensorMan.unregisterListener(MainActivity.this, sensorMan.getDefaultSensor(Sensor.TYPE_TEMPERATURE));
+                    sensorMan.unregisterListener(MainActivity.this, sensorMan.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE));
                     tempVal.setText("0");
                     Toast.makeText(MainActivity.this, "Temperature Sensor De-Activated..!", Toast.LENGTH_SHORT).show();
                 }
@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             Log.i("Value-check", "Light:" + sensorEvent.values[0]);
             lightVal.setText(Float.toString(sensorEvent.values[0]));
         }
-        else if(sen.getType() == Sensor.TYPE_TEMPERATURE){
+        else if(sen.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE){
             Log.i("Value-check", "Temperature:" + sensorEvent.values[0]);
             tempVal.setText(Float.toString(sensorEvent.values[0]));
         }
