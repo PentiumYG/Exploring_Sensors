@@ -5,7 +5,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
-import com.mc2022.template.modelClasses.Gyroscope;
+
 import com.mc2022.template.modelClasses.Temperature;
 
 import java.util.List;
