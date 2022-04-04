@@ -23,8 +23,10 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.mc2022.template.databases.GyroDatabase;
+import com.mc2022.template.databases.LightDatabase;
 import com.mc2022.template.databases.TempDatabase;
 import com.mc2022.template.modelClasses.Gyroscope;
+import com.mc2022.template.modelClasses.Light;
 import com.mc2022.template.modelClasses.Temperature;
 
 import java.util.List;
@@ -232,7 +234,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
         else if(sen.getType() == Sensor.TYPE_LIGHT){
             Log.i("Value-check", "Light:" + sensorEvent.values[0]);
-            lightVal.setText(Float.toString(sensorEvent.values[0]));
+            //Database related
+            LightDatabase ldb = LightDatabase.getInstance(MainActivity.this);
+            Light light = new Light(sensorEvent.values[0]);
+            ldb.lightDAO().insert(light);
+
+            // Get List
+            List<Light> lEntries = ldb.lightDAO().getList();
+
+            String outputTemp = "";
+            for(Light l : lEntries)
+            {
+                outputTemp += Integer.toString(l.getId()) + " " + Float.toString(l.getLight()) + "\n";
+                lightVal.setText(Float.toString(l.getLight()));
+            }
+
+            Log.i("Temperature Output : ",outputTemp);
         }
         else if(sen.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE){
             Log.i("Value-check", "Temperature:" + sensorEvent.values[0]);
