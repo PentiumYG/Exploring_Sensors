@@ -22,6 +22,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.mc2022.template.databases.GyroDatabase;
+import com.mc2022.template.modelClasses.Gyroscope;
+
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
     TextView gyroX, gyroY, gyroZ, tempVal, lightVal, orietZ, orietX, orietY, lVal, loVal;
@@ -168,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         });
 
+        //GPS related
         gpsToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -191,8 +197,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
 
 
-
-
     }
 
     @Override
@@ -201,9 +205,28 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if(sen.getType() == Sensor.TYPE_GYROSCOPE){
             Log.i("Value-check", "Gyroscope X-axis:" + sensorEvent.values[0] + "Y-axis:" + sensorEvent.values[1]
                     + "Z-axis:" + sensorEvent.values[2]);
-            gyroX.setText(Float.toString(sensorEvent.values[0]));
-            gyroY.setText(Float.toString(sensorEvent.values[1]));
-            gyroZ.setText(Float.toString(sensorEvent.values[2]));
+
+            //Database related
+            GyroDatabase gdb = GyroDatabase.getInstance(MainActivity.this);
+            Gyroscope gyroscope = new Gyroscope(sensorEvent.values[0], sensorEvent.values[1], sensorEvent.values[2]);
+            gdb.gyroDAO().insert(gyroscope);
+
+            // Get List
+            List<Gyroscope> gEntries = gdb.gyroDAO().getList();
+
+            String output = "";
+            for(Gyroscope g : gEntries)
+            {
+                output += Integer.toString(g.getId()) + " " + Float.toString(g.getGyroX()) + " " + Float.toString(g.getGyroY()) + " " + Float.toString(g.getGyroZ()) + "\n";
+                gyroX.setText(Float.toString(g.getGyroX()));
+                gyroY.setText(Float.toString(g.getGyroY()));
+                gyroZ.setText(Float.toString(g.getGyroZ()));
+            }
+
+
+            Log.i("Gyroscope Output : ",output);
+
+
         }
         else if(sen.getType() == Sensor.TYPE_LIGHT){
             Log.i("Value-check", "Light:" + sensorEvent.values[0]);
