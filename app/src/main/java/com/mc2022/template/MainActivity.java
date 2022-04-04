@@ -1,12 +1,20 @@
 package com.mc2022.template;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.CompoundButton;
@@ -16,8 +24,31 @@ import android.widget.ToggleButton;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
-    TextView gyroX, gyroY, gyroZ, tempVal, lightVal, orietZ, orietX, orietY;
-    ToggleButton gToggle, laToggle, tToggle, lToggle, pToggle, oToggle;
+    TextView gyroX, gyroY, gyroZ, tempVal, lightVal, orietZ, orietX, orietY, lVal, loVal;
+    ToggleButton gToggle, laToggle, tToggle, lToggle, pToggle, oToggle, gpsToggle;
+    LocationManager locManager;
+    LocationListener locLis;
+
+
+
+
+    class LocationFunc implements LocationListener{
+
+        @Override
+        public void onLocationChanged(@NonNull Location location) {
+            lVal.setText(String.valueOf(location.getLatitude()));
+            loVal.setText(String.valueOf(location.getLongitude()));
+        }
+
+        @Override
+        public void onProviderDisabled(@NonNull String provider) {
+            LocationListener.super.onProviderDisabled(provider);
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +64,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         orietX = (TextView) findViewById(R.id.pitchValue);
         orietY = (TextView) findViewById(R.id.rollValue);
         orietZ = (TextView) findViewById(R.id.azimuthValue);
+        lVal = (TextView) findViewById(R.id.latValue);
+        loVal = (TextView) findViewById(R.id.longValue);
 
 
         //ToggleButton initialization
@@ -42,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         lToggle = (ToggleButton) findViewById(R.id.Ltoggle);
         pToggle = (ToggleButton) findViewById(R.id.Ptoggle);
         oToggle = (ToggleButton) findViewById(R.id.Otoggle);
+        gpsToggle = (ToggleButton) findViewById(R.id.gpsToggle);
 
         //Sensor Service
         SensorManager sensorMan = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -134,6 +168,28 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         });
 
+        gpsToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(gpsToggle.isChecked()){
+                    if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+                    {
+                        ActivityCompat.requestPermissions(MainActivity.this,new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION},1);
+                    }
+                    locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                    locLis = new LocationFunc();
+                    locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 1, locLis);
+                    Toast.makeText(MainActivity.this, "GPS Activated..!", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    locManager.removeUpdates(locLis);
+                    Toast.makeText(MainActivity.this, "GPS De-Activated..!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+
+
 
 
 
@@ -171,4 +227,5 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public void onAccuracyChanged(Sensor sensor, int i) {
 
     }
+
 }

@@ -151,6 +151,12 @@
                     tools:layout_editor_absoluteY="191dp" />
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/black">
+            </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -187,6 +193,12 @@
 
 
         </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:background="@color/black">
+            </LinearLayout>
 
 
             <TextView
@@ -236,7 +248,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="10dp">
 
 
                     <TextView
@@ -262,6 +275,12 @@
 
 
 
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/black">
             </LinearLayout>
 
             <LinearLayout
@@ -299,7 +318,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="10dp">
 
 
                     <TextView
@@ -325,6 +345,12 @@
 
 
 
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:background="@color/black">
             </LinearLayout>
 
 
@@ -375,6 +401,13 @@
 
 
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/black">
+            </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -498,6 +531,126 @@
                         tools:layout_editor_absoluteX="47dp"
                         tools:layout_editor_absoluteY="191dp" />
                 </LinearLayout>
+
+                </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:background="@color/black">
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="15dp"
+                android:text="Location"
+                android:textSize="24dp"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/gps"
+                        android:textColor="@color/design_default_color_primary_dark"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="15dp"
+                        android:text="GPS"
+                        android:textSize="20dp"
+                        android:textStyle="bold|italic"
+                        android:layout_weight="1"
+                        tools:layout_editor_absoluteX="47dp"
+                        tools:layout_editor_absoluteY="191dp" />
+
+
+                    <ToggleButton
+                        android:id="@+id/gpsToggle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:text="ToggleButton" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/latitude"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="15dp"
+                        android:text="Latitude"
+                        android:textSize="16dp"
+                        android:textStyle="bold|italic"
+                        android:textAlignment="center"
+
+                        tools:layout_editor_absoluteX="47dp"
+                        tools:layout_editor_absoluteY="191dp" />
+
+                    <TextView
+                        android:id="@+id/latValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="15dp"
+                        android:text="0"
+                        android:textSize="16dp"
+                        android:textStyle="bold|italic"
+                        android:layout_weight="1"
+                        tools:layout_editor_absoluteX="47dp"
+                        android:textAlignment="center"
+                        tools:layout_editor_absoluteY="191dp" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/longitude"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="15dp"
+                        android:text="Longitude"
+                        android:textSize="16dp"
+                        android:textStyle="bold|italic"
+                        tools:layout_editor_absoluteX="47dp"
+                        android:textAlignment="center"
+                        tools:layout_editor_absoluteY="191dp" />
+
+                    <TextView
+                        android:id="@+id/longValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="15dp"
+                        android:text="0"
+                        android:textSize="16dp"
+                        android:layout_weight="1"
+                        android:textAlignment="center"
+                        android:textStyle="bold|italic"
+                        tools:layout_editor_absoluteX="47dp"
+                        tools:layout_editor_absoluteY="191dp" />
+
+                </LinearLayout>
+
+
 
 
             </LinearLayout>
