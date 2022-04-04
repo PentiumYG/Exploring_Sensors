@@ -24,9 +24,11 @@ import android.widget.ToggleButton;
 
 import com.mc2022.template.databases.GyroDatabase;
 import com.mc2022.template.databases.LightDatabase;
+import com.mc2022.template.databases.MFDatabase;
 import com.mc2022.template.databases.TempDatabase;
 import com.mc2022.template.modelClasses.Gyroscope;
 import com.mc2022.template.modelClasses.Light;
+import com.mc2022.template.modelClasses.MagneticField;
 import com.mc2022.template.modelClasses.Temperature;
 
 import java.util.List;
@@ -161,10 +163,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     Sensor orientation = sensorMan.getDefaultSensor(Sensor.TYPE_ORIENTATION);
                     if(orientation !=null){
                         sensorMan.registerListener((SensorEventListener) MainActivity.this, orientation, SensorManager.SENSOR_DELAY_NORMAL);
-                        Toast.makeText(MainActivity.this, "Orientation Sensor Activated..!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Magnetic Field Sensor Activated..!", Toast.LENGTH_SHORT).show();
                     }
                     else{
-                        Log.i("Orientation-check","Orientation NOT Supported!!");
+                        Log.i("Magnetic Field-check","Magnetic Field NOT Supported!!");
                     }
                 }
                 else{
@@ -172,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     orietX.setText("0");
                     orietY.setText("0");
                     orietZ.setText("0");
-                    Toast.makeText(MainActivity.this, "Orientation Sensor De-Activated..!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Magnetic Field Sensor De-Activated..!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -242,14 +244,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             // Get List
             List<Light> lEntries = ldb.lightDAO().getList();
 
-            String outputTemp = "";
+            String outputLight = "";
             for(Light l : lEntries)
             {
-                outputTemp += Integer.toString(l.getId()) + " " + Float.toString(l.getLight()) + "\n";
+                outputLight += Integer.toString(l.getId()) + " " + Float.toString(l.getLight()) + "\n";
                 lightVal.setText(Float.toString(l.getLight()));
             }
 
-            Log.i("Temperature Output : ",outputTemp);
+            Log.i("Temperature Output : ",outputLight);
         }
         else if(sen.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE){
             Log.i("Value-check", "Temperature:" + sensorEvent.values[0]);
@@ -273,11 +275,29 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
         else if(sen.getType() == Sensor.TYPE_ORIENTATION){
-            Log.i("Value-check", "Orientation X-axis:" + sensorEvent.values[1] + "Y-axis:" + sensorEvent.values[2]
-                    + "Z-axis:" + sensorEvent.values[0]);
-            orietZ.setText(Float.toString(sensorEvent.values[0]));
-            orietX.setText(Float.toString(sensorEvent.values[1]));
-            orietY.setText(Float.toString(sensorEvent.values[2]));
+            Log.i("Value-check", "Magnetic Field X-axis:" + sensorEvent.values[0] + "Y-axis:" + sensorEvent.values[1]
+                    + "Z-axis:" + sensorEvent.values[2]);
+
+            //Database related
+            MFDatabase mfdb = MFDatabase.getInstance(MainActivity.this);
+            MagneticField magneticField = new MagneticField(sensorEvent.values[1], sensorEvent.values[2], sensorEvent.values[0]);
+            mfdb.mfDAO().insert(magneticField);
+
+            // Get List
+            List<MagneticField> mfEntries = mfdb.mfDAO().getList();
+
+            String outputMf = "";
+            for(MagneticField mf : mfEntries)
+            {
+                outputMf += Integer.toString(mf.getId()) + " " + Float.toString(mf.getMagX()) + " " + Float.toString(mf.getMagY()) + " " + Float.toString(mf.getMagZ()) + "\n";
+                orietX.setText(Float.toString(mf.getMagX()));
+                orietY.setText(Float.toString(mf.getMagY()));
+                orietZ.setText(Float.toString(mf.getMagZ()));
+            }
+
+
+            Log.i("MagneticField Output : ",outputMf);
+
         }
     }
 
