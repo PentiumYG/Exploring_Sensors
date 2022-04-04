@@ -187,6 +187,20 @@
                     android:layout_marginTop="15dp"
                     android:text="ToggleButton" />
 
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.github.mikephil.charting.charts.LineChart
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+
+                </com.github.mikephil.charting.charts.LineChart>
+
             </LinearLayout>
 
 
@@ -396,6 +410,19 @@
                         android:layout_marginTop="15dp"
                         android:text="ToggleButton" />
 
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.github.mikephil.charting.charts.LineChart
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+
+                    </com.github.mikephil.charting.charts.LineChart>
 
                 </LinearLayout>
 
