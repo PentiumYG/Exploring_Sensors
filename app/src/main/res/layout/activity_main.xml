@@ -195,6 +195,7 @@
                 android:layout_height="wrap_content">
 
                 <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/laLineChart"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
@@ -418,6 +419,7 @@
                     android:layout_height="wrap_content">
 
                     <com.github.mikephil.charting.charts.LineChart
+                        android:id="@+id/pLineChart"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 

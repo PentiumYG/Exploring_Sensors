@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.github.mikephil.charting.charts.LineChart;
 import com.mc2022.template.databases.GyroDatabase;
 import com.mc2022.template.databases.LightDatabase;
 import com.mc2022.template.databases.MFDatabase;
@@ -39,6 +40,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     ToggleButton gToggle, laToggle, tToggle, lToggle, pToggle, oToggle, gpsToggle;
     LocationManager locManager;
     LocationListener locLis;
+
+    LineChart laLineChart, pLineChart;
 
 
 
@@ -87,6 +90,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         pToggle = (ToggleButton) findViewById(R.id.Ptoggle);
         oToggle = (ToggleButton) findViewById(R.id.Otoggle);
         gpsToggle = (ToggleButton) findViewById(R.id.gpsToggle);
+
+
+        laLineChart = (LineChart) findViewById(R.id.laLineChart);
+        pLineChart = (LineChart) findViewById(R.id.pLineChart);
 
         //Sensor Service
         SensorManager sensorMan = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -196,6 +203,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 else{
                     locManager.removeUpdates(locLis);
                     Toast.makeText(MainActivity.this, "GPS De-Activated..!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        laToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(laToggle.isChecked()){
+
                 }
             }
         });
