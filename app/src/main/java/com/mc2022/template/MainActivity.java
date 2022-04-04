@@ -23,7 +23,9 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.mc2022.template.databases.GyroDatabase;
+import com.mc2022.template.databases.TempDatabase;
 import com.mc2022.template.modelClasses.Gyroscope;
+import com.mc2022.template.modelClasses.Temperature;
 
 import java.util.List;
 
@@ -214,17 +216,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             // Get List
             List<Gyroscope> gEntries = gdb.gyroDAO().getList();
 
-            String output = "";
+            String outputGyro = "";
             for(Gyroscope g : gEntries)
             {
-                output += Integer.toString(g.getId()) + " " + Float.toString(g.getGyroX()) + " " + Float.toString(g.getGyroY()) + " " + Float.toString(g.getGyroZ()) + "\n";
+                outputGyro += Integer.toString(g.getId()) + " " + Float.toString(g.getGyroX()) + " " + Float.toString(g.getGyroY()) + " " + Float.toString(g.getGyroZ()) + "\n";
                 gyroX.setText(Float.toString(g.getGyroX()));
                 gyroY.setText(Float.toString(g.getGyroY()));
                 gyroZ.setText(Float.toString(g.getGyroZ()));
             }
 
 
-            Log.i("Gyroscope Output : ",output);
+            Log.i("Gyroscope Output : ",outputGyro);
 
 
         }
@@ -234,7 +236,23 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
         else if(sen.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE){
             Log.i("Value-check", "Temperature:" + sensorEvent.values[0]);
-            tempVal.setText(Float.toString(sensorEvent.values[0]));
+
+            //Database related
+            TempDatabase tdb = TempDatabase.getInstance(MainActivity.this);
+            Temperature temperature = new Temperature(sensorEvent.values[0]);
+            tdb.tempDAO().insert(temperature);
+
+            // Get List
+            List<Temperature> tEntries = tdb.tempDAO().getList();
+
+            String outputTemp = "";
+            for(Temperature temp : tEntries)
+            {
+                outputTemp += Integer.toString(temp.getId()) + " " + Float.toString(temp.getTemp()) + "\n";
+                tempVal.setText(Float.toString(temp.getTemp()));
+            }
+
+            Log.i("Temperature Output : ",outputTemp);
         }
 
         else if(sen.getType() == Sensor.TYPE_ORIENTATION){
