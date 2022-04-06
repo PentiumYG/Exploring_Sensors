@@ -4,8 +4,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.room.Query;
 
 import android.Manifest;
+import android.app.UiModeManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -15,6 +17,8 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -50,20 +54,29 @@ import com.mc2022.template.modelClasses.MagneticField;
 import com.mc2022.template.modelClasses.Proximity;
 import com.mc2022.template.modelClasses.Temperature;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
-    TextView gyroX, gyroY, gyroZ, tempVal, lightVal, orietZ, orietX, orietY, lVal, loVal, laValX, laValY, laValZ, proxVal;
+    TextView gyroX, gyroY, gyroZ, tempVal, lightVal, orietZ, orietX, orietY, lVal, loVal, laValX, laValY, laValZ, proxVal, nameVal, addrVal, accelS;
     ToggleButton gToggle, laToggle, tToggle, lToggle, pToggle, oToggle, gpsToggle;
     LocationManager locManager;
     LocationListener locLis;
 
     LineChart laLineChart, pLineChart;
 
+    private UiModeManager uiModeManager;
+
     float totalLA[] = new float[10];
     float proxi[] = new float[10];
+
+    private float[] grav;
+    private float accel;
+    private float accelC;
+    private float accelL;
 
 
 
@@ -74,6 +87,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         public void onLocationChanged(@NonNull Location location) {
             lVal.setText(String.valueOf(location.getLatitude()));
             loVal.setText(String.valueOf(location.getLongitude()));
+
+            Geocoder geo = new Geocoder(getApplicationContext(), Locale.getDefault());
+            List<Address> addresses = null;
+            try {
+                addresses = geo.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (addresses.isEmpty()) {
+                nameVal.setText("Waiting for UserLocation");
+                addrVal.setText("Name not generated yet");
+            } else {
+                addrVal.setText(addresses.get(0).getFeatureName() + ", " + addresses.get(0).getLocality() + ", " + addresses.get(0).getAdminArea() + ", " + addresses.get(0).getCountryName());
+                nameVal.setText(addresses.get(0).getFeatureName() + ", " + addresses.get(0).getLocality());
+            }
         }
 
         @Override
@@ -106,6 +134,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         laValY = (TextView) findViewById(R.id.laYvalue);
         laValZ = (TextView) findViewById(R.id.laZvalue);
         proxVal = (TextView) findViewById(R.id.proximityValue);
+        nameVal = (TextView) findViewById(R.id.nameValue);
+        addrVal = (TextView) findViewById(R.id.addValue);
+        accelS = (TextView) findViewById(R.id.accelSen);
 
 
         //ToggleButton initialization
@@ -125,6 +156,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         laLineChart.setPinchZoom(true);
         pLineChart.setTouchEnabled(true);
         pLineChart.setPinchZoom(true);
+
+        //UI mode
+        uiModeManager = (UiModeManager) getSystemService(UI_MODE_SERVICE);
 
 
         //Line Chart Testing
@@ -172,13 +206,25 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //            laLineChart.setData(data);
 //        }
 
-
         
 
 
 
         //Sensor Service
         SensorManager sensorMan = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+
+
+        Sensor accelerometerSensor = sensorMan.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        if (accelerometerSensor != null) {
+            sensorMan.registerListener(MainActivity.this, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
+            Toast.makeText(MainActivity.this, " Accelerometer Sensor sensor started", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            Log.i("Accelerometer","Accelerometer Sensor Not supported");
+        }
+
+
+
 
         gToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -286,66 +332,66 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     proxVal.setText("0");
 
                     //Line Chart
-                    ArrayList<Entry> values2 = new ArrayList<>();
-                    values2.add(new Entry(1, proxi[9]));
-                    values2.add(new Entry(2, proxi[8]));
-                    values2.add(new Entry(3, proxi[7]));
-                    values2.add(new Entry(4, proxi[6]));
-                    values2.add(new Entry(5, proxi[5]));
-                    values2.add(new Entry(6, proxi[4]));
-                    values2.add(new Entry(7, proxi[3]));
-                    values2.add(new Entry(8, proxi[2]));
-                    values2.add(new Entry(9, proxi[1]));
-                    values2.add(new Entry(10, proxi[0]));
-
-                    //dummy data
-//                    values.add(new Entry(1, 3));
-//                    values.add(new Entry(2, 5));
-//                    values.add(new Entry(3, 4));
-//                    values.add(new Entry(4, 6));
-//                    values.add(new Entry(5, 3));
-//                    values.add(new Entry(6, 5));
-//                    values.add(new Entry(7, 4));
-//                    values.add(new Entry(8, 6));
-//                    values.add(new Entry(9, 3));
-//                    values.add(new Entry(10, 5));
-
-
-
-                    LineDataSet set2;
-                    if (pLineChart.getData() != null &&
-                            pLineChart.getData().getDataSetCount() > 0) {
-                        set2 = (LineDataSet) pLineChart.getData().getDataSetByIndex(0);
-                        set2.setValues(values2);
-                        pLineChart.getData().notifyDataChanged();
-                        pLineChart.notifyDataSetChanged();
-                        pLineChart.getDescription().setEnabled(false);
-                    } else {
-                        set2 = new LineDataSet(values2, "Sample Data");
-                        set2.setDrawIcons(false);
-                        set2.enableDashedLine(10f, 5f, 0f);
-                        set2.enableDashedHighlightLine(10f, 5f, 0f);
-                        set2.setColor(Color.DKGRAY);
-                        set2.setCircleColor(Color.DKGRAY);
-                        set2.setLineWidth(1f);
-                        set2.setCircleRadius(3f);
-                        set2.setDrawCircleHole(false);
-                        set2.setValueTextSize(9f);
-                        set2.setDrawFilled(true);
-                        set2.setFormLineWidth(1f);
-                        set2.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
-                        set2.setFormSize(15.f);
-                        if (Utils.getSDKInt() >= 18) {
-                            Drawable drawable = ContextCompat.getDrawable(MainActivity.this, android.R.color.holo_orange_light);
-                            set2.setFillDrawable(drawable);
-                        } else {
-                            set2.setFillColor(Color.DKGRAY);
-                        }
-                        ArrayList<ILineDataSet> dataSets2 = new ArrayList<>();
-                        dataSets2.add(set2);
-                        LineData data2 = new LineData(dataSets2);
-                        pLineChart.setData(data2);
-                    }
+//                    ArrayList<Entry> values2 = new ArrayList<>();
+//                    values2.add(new Entry(1, proxi[9]));
+//                    values2.add(new Entry(2, proxi[8]));
+//                    values2.add(new Entry(3, proxi[7]));
+//                    values2.add(new Entry(4, proxi[6]));
+//                    values2.add(new Entry(5, proxi[5]));
+//                    values2.add(new Entry(6, proxi[4]));
+//                    values2.add(new Entry(7, proxi[3]));
+//                    values2.add(new Entry(8, proxi[2]));
+//                    values2.add(new Entry(9, proxi[1]));
+//                    values2.add(new Entry(10, proxi[0]));
+//
+//                    //dummy data
+////                    values.add(new Entry(1, 3));
+////                    values.add(new Entry(2, 5));
+////                    values.add(new Entry(3, 4));
+////                    values.add(new Entry(4, 6));
+////                    values.add(new Entry(5, 3));
+////                    values.add(new Entry(6, 5));
+////                    values.add(new Entry(7, 4));
+////                    values.add(new Entry(8, 6));
+////                    values.add(new Entry(9, 3));
+////                    values.add(new Entry(10, 5));
+//
+//
+//
+//                    LineDataSet set2;
+//                    if (pLineChart.getData() != null &&
+//                            pLineChart.getData().getDataSetCount() > 0) {
+//                        set2 = (LineDataSet) pLineChart.getData().getDataSetByIndex(0);
+//                        set2.setValues(values2);
+//                        pLineChart.getData().notifyDataChanged();
+//                        pLineChart.notifyDataSetChanged();
+//                        pLineChart.getDescription().setEnabled(false);
+//                    } else {
+//                        set2 = new LineDataSet(values2, "Sample Data");
+//                        set2.setDrawIcons(false);
+//                        set2.enableDashedLine(10f, 5f, 0f);
+//                        set2.enableDashedHighlightLine(10f, 5f, 0f);
+//                        set2.setColor(Color.DKGRAY);
+//                        set2.setCircleColor(Color.DKGRAY);
+//                        set2.setLineWidth(1f);
+//                        set2.setCircleRadius(3f);
+//                        set2.setDrawCircleHole(false);
+//                        set2.setValueTextSize(9f);
+//                        set2.setDrawFilled(true);
+//                        set2.setFormLineWidth(1f);
+//                        set2.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
+//                        set2.setFormSize(15.f);
+//                        if (Utils.getSDKInt() >= 18) {
+//                            Drawable drawable = ContextCompat.getDrawable(MainActivity.this, android.R.color.holo_orange_light);
+//                            set2.setFillDrawable(drawable);
+//                        } else {
+//                            set2.setFillColor(Color.DKGRAY);
+//                        }
+//                        ArrayList<ILineDataSet> dataSets2 = new ArrayList<>();
+//                        dataSets2.add(set2);
+//                        LineData data2 = new LineData(dataSets2);
+//                        pLineChart.setData(data2);
+//                    }
                     Toast.makeText(MainActivity.this, "Proximity Sensor De-Activated..!", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -371,67 +417,67 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     laValY.setText("0");
                     laValZ.setText("0");
 
-                    //Line Chart
-                    ArrayList<Entry> values = new ArrayList<>();
-                    values.add(new Entry(1, totalLA[9]));
-                    values.add(new Entry(2, totalLA[8]));
-                    values.add(new Entry(3, totalLA[7]));
-                    values.add(new Entry(4, totalLA[6]));
-                    values.add(new Entry(5, totalLA[5]));
-                    values.add(new Entry(6, totalLA[4]));
-                    values.add(new Entry(7, totalLA[3]));
-                    values.add(new Entry(8, totalLA[2]));
-                    values.add(new Entry(9, totalLA[1]));
-                    values.add(new Entry(10, totalLA[0]));
-
-                    //dummy data
-//                    values.add(new Entry(1, 3));
-//                    values.add(new Entry(2, 5));
-//                    values.add(new Entry(3, 4));
-//                    values.add(new Entry(4, 6));
-//                    values.add(new Entry(5, 3));
-//                    values.add(new Entry(6, 5));
-//                    values.add(new Entry(7, 4));
-//                    values.add(new Entry(8, 6));
-//                    values.add(new Entry(9, 3));
-//                    values.add(new Entry(10, 5));
-
-
-
-                    LineDataSet set1;
-                    if (laLineChart.getData() != null &&
-                            laLineChart.getData().getDataSetCount() > 0) {
-                        set1 = (LineDataSet) laLineChart.getData().getDataSetByIndex(0);
-                        set1.setValues(values);
-                        laLineChart.getData().notifyDataChanged();
-                        laLineChart.notifyDataSetChanged();
-                        laLineChart.getDescription().setEnabled(false);
-                    } else {
-                        set1 = new LineDataSet(values, "Sample Data");
-                        set1.setDrawIcons(false);
-                        set1.enableDashedLine(10f, 5f, 0f);
-                        set1.enableDashedHighlightLine(10f, 5f, 0f);
-                        set1.setColor(Color.DKGRAY);
-                        set1.setCircleColor(Color.DKGRAY);
-                        set1.setLineWidth(1f);
-                        set1.setCircleRadius(3f);
-                        set1.setDrawCircleHole(false);
-                        set1.setValueTextSize(9f);
-                        set1.setDrawFilled(true);
-                        set1.setFormLineWidth(1f);
-                        set1.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
-                        set1.setFormSize(15.f);
-                        if (Utils.getSDKInt() >= 18) {
-                            Drawable drawable = ContextCompat.getDrawable(MainActivity.this, R.color.teal_200);
-                            set1.setFillDrawable(drawable);
-                        } else {
-                            set1.setFillColor(Color.DKGRAY);
-                        }
-                        ArrayList<ILineDataSet> dataSets = new ArrayList<>();
-                        dataSets.add(set1);
-                        LineData data = new LineData(dataSets);
-                        laLineChart.setData(data);
-                    }
+//                    //Line Chart
+//                    ArrayList<Entry> values = new ArrayList<>();
+//                    values.add(new Entry(1, totalLA[9]));
+//                    values.add(new Entry(2, totalLA[8]));
+//                    values.add(new Entry(3, totalLA[7]));
+//                    values.add(new Entry(4, totalLA[6]));
+//                    values.add(new Entry(5, totalLA[5]));
+//                    values.add(new Entry(6, totalLA[4]));
+//                    values.add(new Entry(7, totalLA[3]));
+//                    values.add(new Entry(8, totalLA[2]));
+//                    values.add(new Entry(9, totalLA[1]));
+//                    values.add(new Entry(10, totalLA[0]));
+//
+//                    //dummy data
+////                    values.add(new Entry(1, 3));
+////                    values.add(new Entry(2, 5));
+////                    values.add(new Entry(3, 4));
+////                    values.add(new Entry(4, 6));
+////                    values.add(new Entry(5, 3));
+////                    values.add(new Entry(6, 5));
+////                    values.add(new Entry(7, 4));
+////                    values.add(new Entry(8, 6));
+////                    values.add(new Entry(9, 3));
+////                    values.add(new Entry(10, 5));
+//
+//
+//
+//                    LineDataSet set1;
+//                    if (laLineChart.getData() != null &&
+//                            laLineChart.getData().getDataSetCount() > 0) {
+//                        set1 = (LineDataSet) laLineChart.getData().getDataSetByIndex(0);
+//                        set1.setValues(values);
+//                        laLineChart.getData().notifyDataChanged();
+//                        laLineChart.notifyDataSetChanged();
+//                        laLineChart.getDescription().setEnabled(false);
+//                    } else {
+//                        set1 = new LineDataSet(values, "Sample Data");
+//                        set1.setDrawIcons(false);
+//                        set1.enableDashedLine(10f, 5f, 0f);
+//                        set1.enableDashedHighlightLine(10f, 5f, 0f);
+//                        set1.setColor(Color.DKGRAY);
+//                        set1.setCircleColor(Color.DKGRAY);
+//                        set1.setLineWidth(1f);
+//                        set1.setCircleRadius(3f);
+//                        set1.setDrawCircleHole(false);
+//                        set1.setValueTextSize(9f);
+//                        set1.setDrawFilled(true);
+//                        set1.setFormLineWidth(1f);
+//                        set1.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
+//                        set1.setFormSize(15.f);
+//                        if (Utils.getSDKInt() >= 18) {
+//                            Drawable drawable = ContextCompat.getDrawable(MainActivity.this, R.color.teal_200);
+//                            set1.setFillDrawable(drawable);
+//                        } else {
+//                            set1.setFillColor(Color.DKGRAY);
+//                        }
+//                        ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+//                        dataSets.add(set1);
+//                        LineData data = new LineData(dataSets);
+//                        laLineChart.setData(data);
+//                    }
 
                     Toast.makeText(MainActivity.this, "Linear Acceleration Sensor De-Activated..!", Toast.LENGTH_SHORT).show();
                 }
@@ -498,12 +544,44 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
 
         }
+        else if (sen.getType() == Sensor.TYPE_ACCELEROMETER) {
+            grav = sensorEvent.values.clone();
+            // Shake detection
+            float x = grav[0];
+            float y = grav[1];
+            float z = grav[2];
+            accelL = accelC;
+            accelC = (float)Math.sqrt(x*x + y*y + z*z);
+            float delta = accelC - accelL;
+            accel = accel * 0.9f + delta;
+            // Make this higher or lower according to how much
+            // motion you want to detect
+
+            if(accel > 0.1){
+                // do something
+                accelS.setText("Device Moving");
+            }
+            else{
+                accelS.setText("Device NOT Moving");
+            }
+
+        }
+
+
         else if(sen.getType() == Sensor.TYPE_LIGHT){
             Log.i("Value-check", "Light:" + sensorEvent.values[0]);
             //Database related
             LightDatabase ldb = LightDatabase.getInstance(MainActivity.this);
             Light light = new Light(sensorEvent.values[0]);
             ldb.lightDAO().insert(light);
+
+            //
+            if(light.getLight() > 3000){
+                uiModeManager.setNightMode(UiModeManager.MODE_NIGHT_YES);
+            }
+            else{
+                uiModeManager.setNightMode(UiModeManager.MODE_NIGHT_NO);
+            }
 
             // Get List
             List<Light> lEntries = ldb.lightDAO().getList();
@@ -529,17 +607,55 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             // Get List
             //List<LinearAcceleration> laEntries = ladb.laDAO().getList();
 
+            laValX.setText(Float.toString(sensorEvent.values[0]));
+            laValY.setText(Float.toString(sensorEvent.values[1]));
+            laValZ.setText(Float.toString(sensorEvent.values[2]));
+
             List<LinearAcceleration> last10LA  = ladb.laDAO().getLast10();
 
-            for(int i=0;i<10;i++){
-                totalLA[i] = (sensorEvent.values[0]+sensorEvent.values[1]+sensorEvent.values[2])/3;
+            ArrayList<Entry> values = new ArrayList<>();
+            for(LinearAcceleration la : last10LA){
+                values.add(new Entry(la.getId(), ((la.getLaccX()+ la.getLaccY()+ la.getLaccZ())/3)));
+            }
+
+            //Line Chart
+            LineDataSet set1;
+            if (laLineChart.getData() != null &&
+                    laLineChart.getData().getDataSetCount() > 0) {
+                set1 = (LineDataSet) laLineChart.getData().getDataSetByIndex(0);
+                set1.setValues(values);
+                laLineChart.getData().notifyDataChanged();
+                laLineChart.notifyDataSetChanged();
+                laLineChart.getDescription().setEnabled(false);
+            } else {
+                set1 = new LineDataSet(values, "Sample Data");
+                set1.setDrawIcons(false);
+                set1.enableDashedLine(10f, 5f, 0f);
+                set1.enableDashedHighlightLine(10f, 5f, 0f);
+                set1.setColor(Color.DKGRAY);
+                set1.setCircleColor(Color.DKGRAY);
+                set1.setLineWidth(1f);
+                set1.setCircleRadius(3f);
+                set1.setDrawCircleHole(false);
+                set1.setValueTextSize(9f);
+                set1.setDrawFilled(true);
+                set1.setFormLineWidth(1f);
+                set1.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
+                set1.setFormSize(15.f);
+                if (Utils.getSDKInt() >= 18) {
+                    Drawable drawable = ContextCompat.getDrawable(MainActivity.this, R.color.teal_200);
+                    set1.setFillDrawable(drawable);
+                } else {
+                    set1.setFillColor(Color.DKGRAY);
+                }
+                ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+                dataSets.add(set1);
+                LineData data = new LineData(dataSets);
+                laLineChart.setData(data);
             }
 
 
 
-            laValX.setText(Float.toString(sensorEvent.values[0]));
-            laValY.setText(Float.toString(sensorEvent.values[1]));
-            laValZ.setText(Float.toString(sensorEvent.values[2]));
 
             String outputLA = "";
           //  String outTotal = "";
@@ -611,12 +727,62 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             Proximity proximity = new Proximity(sensorEvent.values[0]);
             prdb.proxDAO().insert(proximity);
 
+            if(proximity.getProx() < 3){
+                gpsToggle.setChecked(false);
+                gToggle.setChecked(false);
+                tToggle.setChecked(false);
+                oToggle.setChecked(false);
+                laToggle.setChecked(false);
+                //pToggle.setChecked(false);
+            }
+
             // Get List
             List<Proximity> pEntries = prdb.proxDAO().getLast10();
 
-            for(int k=0;k<10;k++){
-                proxi[k]=sensorEvent.values[0];
+//            for(int k=0;k<10;k++){
+//                proxi[k]=sensorEvent.values[0];
+//            }
+            ArrayList<Entry> values2 = new ArrayList<>();
+            for(Proximity p : pEntries) {
+                values2.add(new Entry(p.getId(), p.getProx()));
             }
+
+            LineDataSet set2;
+            if (pLineChart.getData() != null &&
+                    pLineChart.getData().getDataSetCount() > 0) {
+                set2 = (LineDataSet) pLineChart.getData().getDataSetByIndex(0);
+                set2.setValues(values2);
+                pLineChart.getData().notifyDataChanged();
+                pLineChart.notifyDataSetChanged();
+                pLineChart.getDescription().setEnabled(false);
+            } else {
+                set2 = new LineDataSet(values2, "Sample Data");
+                set2.setDrawIcons(false);
+                set2.enableDashedLine(10f, 5f, 0f);
+                set2.enableDashedHighlightLine(10f, 5f, 0f);
+                set2.setColor(Color.DKGRAY);
+                set2.setCircleColor(Color.DKGRAY);
+                set2.setLineWidth(1f);
+                set2.setCircleRadius(3f);
+                set2.setDrawCircleHole(false);
+                set2.setValueTextSize(9f);
+                set2.setDrawFilled(true);
+                set2.setFormLineWidth(1f);
+                set2.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
+                set2.setFormSize(15.f);
+                if (Utils.getSDKInt() >= 18) {
+                    Drawable drawable = ContextCompat.getDrawable(MainActivity.this, android.R.color.holo_orange_light);
+                    set2.setFillDrawable(drawable);
+                } else {
+                    set2.setFillColor(Color.DKGRAY);
+                }
+                ArrayList<ILineDataSet> dataSets2 = new ArrayList<>();
+                dataSets2.add(set2);
+                LineData data2 = new LineData(dataSets2);
+                pLineChart.setData(data2);
+            }
+
+
 
             String outputPr = "";
             for(Proximity p : pEntries)

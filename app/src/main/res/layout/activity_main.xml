@@ -18,6 +18,16 @@
             android:orientation="vertical" >
 
             <TextView
+                android:layout_width="match_parent"
+                android:id="@+id/accelSen"
+                android:layout_height="wrap_content"
+                android:hint="Accelerometer Sensor"
+                android:textSize="16dp"
+                android:textStyle="bold|italic"
+                android:textAlignment="center">
+            </TextView>
+
+            <TextView
                 android:id="@+id/motionSensor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -32,6 +42,7 @@
                 app:layout_constraintHorizontal_bias="0.135"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
 
            <LinearLayout
                android:layout_width="match_parent"
@@ -716,7 +727,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="15dp"
-                        android:text="GPS"
+                        android:text="Add a Place"
                         android:textSize="20dp"
                         android:textStyle="bold|italic"
                         android:layout_weight="1"
@@ -737,6 +748,42 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
+
+
+                    <TextView
+                        android:id="@+id/name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="15dp"
+                        android:text="Name"
+                        android:textSize="16dp"
+                        android:textStyle="bold|italic"
+                        android:textAlignment="center"
+
+                        tools:layout_editor_absoluteX="47dp"
+                        tools:layout_editor_absoluteY="191dp" />
+
+                    <TextView
+                        android:id="@+id/nameValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="15dp"
+                        android:hint="Current Location"
+                        android:textSize="16dp"
+                        android:textStyle="bold|italic"
+                        android:layout_weight="1"
+                        tools:layout_editor_absoluteX="47dp"
+                        android:textAlignment="center"
+                        tools:layout_editor_absoluteY="191dp" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
 
                     <TextView
                         android:id="@+id/latitude"
@@ -796,6 +843,556 @@
                         android:textStyle="bold|italic"
                         tools:layout_editor_absoluteX="47dp"
                         tools:layout_editor_absoluteY="191dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+
+                    <TextView
+                        android:id="@+id/address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="15dp"
+                        android:text="Address"
+                        android:textSize="16dp"
+                        android:textStyle="bold|italic"
+                        android:textAlignment="center"
+
+                        tools:layout_editor_absoluteX="47dp"
+                        tools:layout_editor_absoluteY="191dp" />
+
+                    <TextView
+                        android:id="@+id/addValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="15dp"
+                        android:hint="Current Location Address"
+                        android:textSize="16dp"
+                        android:textStyle="bold|italic"
+                        android:layout_weight="1"
+                        tools:layout_editor_absoluteX="47dp"
+                        android:textAlignment="center"
+                        tools:layout_editor_absoluteY="191dp" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="5dp"
+                    android:background="@color/black">
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/fgps1"
+                            android:textColor="@color/design_default_color_primary_dark"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="15dp"
+                            android:text="Find my places"
+                            android:textSize="20dp"
+                            android:textStyle="bold|italic"
+                            android:layout_weight="1"
+                            tools:layout_editor_absoluteX="47dp"
+                            tools:layout_editor_absoluteY="191dp" />
+
+
+                        <ToggleButton
+                            android:id="@+id/fgpsToggle1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="15dp"
+                            android:text="ToggleButton" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Place-1"
+                        android:textSize="16dp"
+                        android:textColor="@color/black"
+                        android:textStyle="bold|italic"
+                        android:textAlignment="center">
+                    </TextView>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+
+                        <TextView
+                            android:id="@+id/fname1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="15dp"
+                            android:text="Name"
+                            android:textSize="16dp"
+                            android:textStyle="bold|italic"
+                            android:textAlignment="center"
+
+                            tools:layout_editor_absoluteX="47dp"
+                            tools:layout_editor_absoluteY="191dp" />
+
+                        <TextView
+                            android:id="@+id/fnameValue1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="15dp"
+                            android:hint="Current Location"
+                            android:textSize="16dp"
+                            android:textStyle="bold|italic"
+                            android:layout_weight="1"
+                            tools:layout_editor_absoluteX="47dp"
+                            android:textAlignment="center"
+                            tools:layout_editor_absoluteY="191dp" />
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+
+                        <TextView
+                            android:id="@+id/flatitude1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="15dp"
+                            android:text="Latitude"
+                            android:textSize="16dp"
+                            android:textStyle="bold|italic"
+                            android:textAlignment="center"
+
+                            tools:layout_editor_absoluteX="47dp"
+                            tools:layout_editor_absoluteY="191dp" />
+
+                        <TextView
+                            android:id="@+id/flatValue1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="15dp"
+                            android:text="0"
+                            android:textSize="16dp"
+                            android:textStyle="bold|italic"
+                            android:layout_weight="1"
+                            tools:layout_editor_absoluteX="47dp"
+                            android:textAlignment="center"
+                            tools:layout_editor_absoluteY="191dp" />
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/flongitude1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="15dp"
+                            android:text="Longitude"
+                            android:textSize="16dp"
+                            android:textStyle="bold|italic"
+                            tools:layout_editor_absoluteX="47dp"
+                            android:textAlignment="center"
+                            tools:layout_editor_absoluteY="191dp" />
+
+                        <TextView
+                            android:id="@+id/flongValue1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="15dp"
+                            android:text="0"
+                            android:textSize="16dp"
+                            android:layout_weight="1"
+                            android:textAlignment="center"
+                            android:textStyle="bold|italic"
+                            tools:layout_editor_absoluteX="47dp"
+                            tools:layout_editor_absoluteY="191dp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+
+                        <TextView
+                            android:id="@+id/faddress1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="15dp"
+                            android:text="Address"
+                            android:textSize="16dp"
+                            android:textStyle="bold|italic"
+                            android:textAlignment="center"
+
+                            tools:layout_editor_absoluteX="47dp"
+                            tools:layout_editor_absoluteY="191dp" />
+
+                        <TextView
+                            android:id="@+id/faddValue1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="15dp"
+                            android:hint="Current Location Address"
+                            android:textSize="16dp"
+                            android:textStyle="bold|italic"
+                            android:layout_weight="1"
+                            tools:layout_editor_absoluteX="47dp"
+                            android:textAlignment="center"
+                            tools:layout_editor_absoluteY="191dp" />
+
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/black">
+                </LinearLayout>
+
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Place-2"
+                        android:textSize="16dp"
+                        android:textColor="@color/black"
+                        android:textStyle="bold|italic"
+                        android:textAlignment="center">
+
+                    </TextView>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+
+                        <TextView
+                            android:id="@+id/fname2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="15dp"
+                            android:text="Name"
+                            android:textSize="16dp"
+                            android:textStyle="bold|italic"
+                            android:textAlignment="center"
+
+                            tools:layout_editor_absoluteX="47dp"
+                            tools:layout_editor_absoluteY="191dp" />
+
+                        <TextView
+                            android:id="@+id/fnameValue2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="15dp"
+                            android:hint="Current Location"
+                            android:textSize="16dp"
+                            android:textStyle="bold|italic"
+                            android:layout_weight="1"
+                            tools:layout_editor_absoluteX="47dp"
+                            android:textAlignment="center"
+                            tools:layout_editor_absoluteY="191dp" />
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+
+                        <TextView
+                            android:id="@+id/flatitude2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="15dp"
+                            android:text="Latitude"
+                            android:textSize="16dp"
+                            android:textStyle="bold|italic"
+                            android:textAlignment="center"
+
+                            tools:layout_editor_absoluteX="47dp"
+                            tools:layout_editor_absoluteY="191dp" />
+
+                        <TextView
+                            android:id="@+id/flatValue2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="15dp"
+                            android:text="0"
+                            android:textSize="16dp"
+                            android:textStyle="bold|italic"
+                            android:layout_weight="1"
+                            tools:layout_editor_absoluteX="47dp"
+                            android:textAlignment="center"
+                            tools:layout_editor_absoluteY="191dp" />
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/flongitude2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="15dp"
+                            android:text="Longitude"
+                            android:textSize="16dp"
+                            android:textStyle="bold|italic"
+                            tools:layout_editor_absoluteX="47dp"
+                            android:textAlignment="center"
+                            tools:layout_editor_absoluteY="191dp" />
+
+                        <TextView
+                            android:id="@+id/flongValue2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="15dp"
+                            android:text="0"
+                            android:textSize="16dp"
+                            android:layout_weight="1"
+                            android:textAlignment="center"
+                            android:textStyle="bold|italic"
+                            tools:layout_editor_absoluteX="47dp"
+                            tools:layout_editor_absoluteY="191dp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+
+                        <TextView
+                            android:id="@+id/faddress2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="15dp"
+                            android:text="Address"
+                            android:textSize="16dp"
+                            android:textStyle="bold|italic"
+                            android:textAlignment="center"
+
+                            tools:layout_editor_absoluteX="47dp"
+                            tools:layout_editor_absoluteY="191dp" />
+
+                        <TextView
+                            android:id="@+id/faddValue2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="15dp"
+                            android:hint="Current Location Address"
+                            android:textSize="16dp"
+                            android:textStyle="bold|italic"
+                            android:layout_weight="1"
+                            tools:layout_editor_absoluteX="47dp"
+                            android:textAlignment="center"
+                            tools:layout_editor_absoluteY="191dp" />
+
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/black">
+                </LinearLayout>
+
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Place-3"
+                        android:textSize="16dp"
+                        android:textColor="@color/black"
+                        android:textStyle="bold|italic"
+                        android:textAlignment="center">
+
+                    </TextView>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+
+                        <TextView
+                            android:id="@+id/fname3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="15dp"
+                            android:text="Name"
+                            android:textSize="16dp"
+                            android:textStyle="bold|italic"
+                            android:textAlignment="center"
+
+                            tools:layout_editor_absoluteX="47dp"
+                            tools:layout_editor_absoluteY="191dp" />
+
+                        <TextView
+                            android:id="@+id/fnameValue3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="15dp"
+                            android:hint="Current Location"
+                            android:textSize="16dp"
+                            android:textStyle="bold|italic"
+                            android:layout_weight="1"
+                            tools:layout_editor_absoluteX="47dp"
+                            android:textAlignment="center"
+                            tools:layout_editor_absoluteY="191dp" />
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+
+                        <TextView
+                            android:id="@+id/flatitude3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="15dp"
+                            android:text="Latitude"
+                            android:textSize="16dp"
+                            android:textStyle="bold|italic"
+                            android:textAlignment="center"
+
+                            tools:layout_editor_absoluteX="47dp"
+                            tools:layout_editor_absoluteY="191dp" />
+
+                        <TextView
+                            android:id="@+id/flatValue3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="15dp"
+                            android:text="0"
+                            android:textSize="16dp"
+                            android:textStyle="bold|italic"
+                            android:layout_weight="1"
+                            tools:layout_editor_absoluteX="47dp"
+                            android:textAlignment="center"
+                            tools:layout_editor_absoluteY="191dp" />
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/flongitude3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="15dp"
+                            android:text="Longitude"
+                            android:textSize="16dp"
+                            android:textStyle="bold|italic"
+                            tools:layout_editor_absoluteX="47dp"
+                            android:textAlignment="center"
+                            tools:layout_editor_absoluteY="191dp" />
+
+                        <TextView
+                            android:id="@+id/flongValue3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="15dp"
+                            android:text="0"
+                            android:textSize="16dp"
+                            android:layout_weight="1"
+                            android:textAlignment="center"
+                            android:textStyle="bold|italic"
+                            tools:layout_editor_absoluteX="47dp"
+                            tools:layout_editor_absoluteY="191dp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+
+                        <TextView
+                            android:id="@+id/faddress3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="15dp"
+                            android:text="Address"
+                            android:textSize="16dp"
+                            android:textStyle="bold|italic"
+                            android:textAlignment="center"
+
+                            tools:layout_editor_absoluteX="47dp"
+                            tools:layout_editor_absoluteY="191dp" />
+
+                        <TextView
+                            android:id="@+id/faddValue3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="15dp"
+                            android:hint="Current Location Address"
+                            android:textSize="16dp"
+                            android:textStyle="bold|italic"
+                            android:layout_weight="1"
+                            tools:layout_editor_absoluteX="47dp"
+                            android:textAlignment="center"
+                            tools:layout_editor_absoluteY="191dp" />
+
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
