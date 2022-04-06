@@ -13,7 +13,7 @@ import androidx.sqlite.db.SupportSQLiteOpenHelper;
 import com.mc2022.template.interfaces.GyroDAO;
 import com.mc2022.template.modelClasses.Gyroscope;
 
-@Database(entities = {Gyroscope.class},version = 1)
+@Database(entities = {Gyroscope.class},version = 2)
 public abstract class GyroDatabase extends RoomDatabase {
 
     // database object

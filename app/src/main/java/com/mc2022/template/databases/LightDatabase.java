@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase;
 import com.mc2022.template.interfaces.LightDAO;
 import com.mc2022.template.modelClasses.Light;
 
-@Database(entities = {Light.class},version = 1)
+@Database(entities = {Light.class},version = 2)
 public abstract class LightDatabase extends RoomDatabase {
     public abstract LightDAO lightDAO();
 

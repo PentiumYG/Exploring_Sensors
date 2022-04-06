@@ -8,6 +8,9 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.DashPathEffect;
+import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -23,20 +26,34 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.LimitLine;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.listener.OnChartGestureListener;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.utils.Utils;
 import com.mc2022.template.databases.GyroDatabase;
+import com.mc2022.template.databases.LADatabase;
 import com.mc2022.template.databases.LightDatabase;
 import com.mc2022.template.databases.MFDatabase;
 import com.mc2022.template.databases.TempDatabase;
 import com.mc2022.template.modelClasses.Gyroscope;
 import com.mc2022.template.modelClasses.Light;
+import com.mc2022.template.modelClasses.LinearAcceleration;
 import com.mc2022.template.modelClasses.MagneticField;
 import com.mc2022.template.modelClasses.Temperature;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
-    TextView gyroX, gyroY, gyroZ, tempVal, lightVal, orietZ, orietX, orietY, lVal, loVal;
+    TextView gyroX, gyroY, gyroZ, tempVal, lightVal, orietZ, orietX, orietY, lVal, loVal, laValX, laValY, laValZ;
     ToggleButton gToggle, laToggle, tToggle, lToggle, pToggle, oToggle, gpsToggle;
     LocationManager locManager;
     LocationListener locLis;
@@ -80,6 +97,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         orietZ = (TextView) findViewById(R.id.azimuthValue);
         lVal = (TextView) findViewById(R.id.latValue);
         loVal = (TextView) findViewById(R.id.longValue);
+        laValX = (TextView) findViewById(R.id.laXvalue);
+        laValY = (TextView) findViewById(R.id.laYvalue);
+        laValZ = (TextView) findViewById(R.id.laZvalue);
 
 
         //ToggleButton initialization
@@ -94,6 +114,62 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         laLineChart = (LineChart) findViewById(R.id.laLineChart);
         pLineChart = (LineChart) findViewById(R.id.pLineChart);
+
+        laLineChart.setTouchEnabled(true);
+        laLineChart.setPinchZoom(true);
+        pLineChart.setTouchEnabled(true);
+        pLineChart.setPinchZoom(true);
+
+
+        //Line Chart Testing
+        ArrayList<Entry> values = new ArrayList<>();
+        values.add(new Entry(1, 50));
+        values.add(new Entry(2, 100));
+        values.add(new Entry(3, 140));
+        values.add(new Entry(4, 150));
+        values.add(new Entry(5, 270));
+
+
+
+        LineDataSet set1;
+        if (laLineChart.getData() != null &&
+                laLineChart.getData().getDataSetCount() > 0) {
+            set1 = (LineDataSet) laLineChart.getData().getDataSetByIndex(0);
+            set1.setValues(values);
+            laLineChart.getData().notifyDataChanged();
+            laLineChart.notifyDataSetChanged();
+            laLineChart.getDescription().setEnabled(false);
+        } else {
+            set1 = new LineDataSet(values, "Sample Data");
+            set1.setDrawIcons(false);
+            set1.enableDashedLine(10f, 5f, 0f);
+            set1.enableDashedHighlightLine(10f, 5f, 0f);
+            set1.setColor(Color.DKGRAY);
+            set1.setCircleColor(Color.DKGRAY);
+            set1.setLineWidth(1f);
+            set1.setCircleRadius(3f);
+            set1.setDrawCircleHole(false);
+            set1.setValueTextSize(9f);
+            set1.setDrawFilled(true);
+            set1.setFormLineWidth(1f);
+            set1.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
+            set1.setFormSize(15.f);
+            if (Utils.getSDKInt() >= 18) {
+                Drawable drawable = ContextCompat.getDrawable(this, R.color.teal_200);
+                set1.setFillDrawable(drawable);
+            } else {
+                set1.setFillColor(Color.DKGRAY);
+            }
+            ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+            dataSets.add(set1);
+            LineData data = new LineData(dataSets);
+            laLineChart.setData(data);
+        }
+        
+        
+        
+
+
 
         //Sensor Service
         SensorManager sensorMan = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -186,6 +262,31 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         });
 
+        laToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(laToggle.isChecked()){
+                    Sensor linearAcc = sensorMan.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+                    if(linearAcc !=null){
+                        sensorMan.registerListener((SensorEventListener) MainActivity.this, linearAcc, SensorManager.SENSOR_DELAY_NORMAL);
+                        Toast.makeText(MainActivity.this, "Linear Acceleration Sensor Activated..!", Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        Log.i("Linear Accel-check","Linear Acceleration NOT Supported!!");
+                    }
+
+                }
+                else{
+                    sensorMan.unregisterListener(MainActivity.this, sensorMan.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION));
+                    laValX.setText("0");
+                    laValY.setText("0");
+                    laValZ.setText("0");
+                    Toast.makeText(MainActivity.this, "Linear Acceleration Sensor De-Activated..!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+
         //GPS related
         gpsToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -207,15 +308,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         });
 
-        laToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(laToggle.isChecked()){
-
-                }
-            }
-        });
-
 
 
 
@@ -233,6 +325,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             Gyroscope gyroscope = new Gyroscope(sensorEvent.values[0], sensorEvent.values[1], sensorEvent.values[2]);
             gdb.gyroDAO().insert(gyroscope);
 
+            gyroX.setText(Float.toString(sensorEvent.values[0]));
+            gyroY.setText(Float.toString(sensorEvent.values[1]));
+            gyroZ.setText(Float.toString(sensorEvent.values[2]));
+
             // Get List
             List<Gyroscope> gEntries = gdb.gyroDAO().getList();
 
@@ -240,9 +336,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             for(Gyroscope g : gEntries)
             {
                 outputGyro += Integer.toString(g.getId()) + " " + Float.toString(g.getGyroX()) + " " + Float.toString(g.getGyroY()) + " " + Float.toString(g.getGyroZ()) + "\n";
-                gyroX.setText(Float.toString(g.getGyroX()));
-                gyroY.setText(Float.toString(g.getGyroY()));
-                gyroZ.setText(Float.toString(g.getGyroZ()));
+//                gyroX.setText(Float.toString(g.getGyroX()));
+//                gyroY.setText(Float.toString(g.getGyroY()));
+//                gyroZ.setText(Float.toString(g.getGyroZ()));
             }
 
 
@@ -268,6 +364,39 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
 
             Log.i("Temperature Output : ",outputLight);
+        }
+        else if(sen.getType() == Sensor.TYPE_LINEAR_ACCELERATION){
+            Log.i("Value-check", "Linear Acceleration X-axis:" + sensorEvent.values[0] + "Y-axis:" + sensorEvent.values[1]
+                    + "Z-axis:" + sensorEvent.values[2]);
+
+            //Database related
+            LADatabase ladb = LADatabase.getInstance(MainActivity.this);
+            LinearAcceleration linearAcceleration = new LinearAcceleration(sensorEvent.values[0], sensorEvent.values[1], sensorEvent.values[2]);
+            ladb.laDAO().insert(linearAcceleration);
+
+            // Get List
+            List<LinearAcceleration> laEntries = ladb.laDAO().getList();
+
+
+            laValX.setText(Float.toString(sensorEvent.values[0]));
+            laValY.setText(Float.toString(sensorEvent.values[1]));
+            laValZ.setText(Float.toString(sensorEvent.values[2]));
+
+            String outputLA = "";
+            for(LinearAcceleration la : laEntries)
+            {
+                outputLA += Integer.toString(la.getId()) + " " + Float.toString(la.getLaccX()) + " " + Float.toString(la.getLaccY()) + " " + Float.toString(la.getLaccZ()) + "\n";
+//                laValX.setText(Float.toString(sensorEvent.values[0]));
+//                laValY.setText(Float.toString(sensorEvent.values[1]));
+//                laValZ.setText(Float.toString(sensorEvent.values[2]));
+            }
+
+
+            Log.i("LinearAcc Output : ",outputLA);
+
+
+
+
         }
         else if(sen.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE){
             Log.i("Value-check", "Temperature:" + sensorEvent.values[0]);

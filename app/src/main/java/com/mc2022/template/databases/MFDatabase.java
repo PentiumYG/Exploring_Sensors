@@ -9,7 +9,7 @@ import com.mc2022.template.interfaces.mfDAO;
 
 import com.mc2022.template.modelClasses.MagneticField;
 
-@Database(entities = {MagneticField.class},version = 1)
+@Database(entities = {MagneticField.class},version = 2)
 public abstract class MFDatabase extends RoomDatabase {
     public abstract mfDAO mfDAO();
     public static MFDatabase mfDatainstance;
