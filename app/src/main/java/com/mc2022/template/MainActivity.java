@@ -42,10 +42,12 @@ import com.mc2022.template.databases.LADatabase;
 import com.mc2022.template.databases.LightDatabase;
 import com.mc2022.template.databases.MFDatabase;
 import com.mc2022.template.databases.TempDatabase;
+import com.mc2022.template.databases.proxDatabase;
 import com.mc2022.template.modelClasses.Gyroscope;
 import com.mc2022.template.modelClasses.Light;
 import com.mc2022.template.modelClasses.LinearAcceleration;
 import com.mc2022.template.modelClasses.MagneticField;
+import com.mc2022.template.modelClasses.Proximity;
 import com.mc2022.template.modelClasses.Temperature;
 
 import java.util.ArrayList;
@@ -53,7 +55,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
-    TextView gyroX, gyroY, gyroZ, tempVal, lightVal, orietZ, orietX, orietY, lVal, loVal, laValX, laValY, laValZ;
+    TextView gyroX, gyroY, gyroZ, tempVal, lightVal, orietZ, orietX, orietY, lVal, loVal, laValX, laValY, laValZ, proxVal;
     ToggleButton gToggle, laToggle, tToggle, lToggle, pToggle, oToggle, gpsToggle;
     LocationManager locManager;
     LocationListener locLis;
@@ -61,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     LineChart laLineChart, pLineChart;
 
     float totalLA[] = new float[10];
+    float proxi[] = new float[10];
 
 
 
@@ -102,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         laValX = (TextView) findViewById(R.id.laXvalue);
         laValY = (TextView) findViewById(R.id.laYvalue);
         laValZ = (TextView) findViewById(R.id.laZvalue);
+        proxVal = (TextView) findViewById(R.id.proximityValue);
 
 
         //ToggleButton initialization
@@ -248,10 +252,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     Sensor orientation = sensorMan.getDefaultSensor(Sensor.TYPE_ORIENTATION);
                     if(orientation !=null){
                         sensorMan.registerListener((SensorEventListener) MainActivity.this, orientation, SensorManager.SENSOR_DELAY_NORMAL);
-                        Toast.makeText(MainActivity.this, "Magnetic Field Sensor Activated..!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Orientation Sensor Activated..!", Toast.LENGTH_SHORT).show();
                     }
                     else{
-                        Log.i("Magnetic Field-check","Magnetic Field NOT Supported!!");
+                        Log.i("Orientation-check","Orientation NOT Supported!!");
                     }
                 }
                 else{
@@ -259,7 +263,90 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     orietX.setText("0");
                     orietY.setText("0");
                     orietZ.setText("0");
-                    Toast.makeText(MainActivity.this, "Magnetic Field Sensor De-Activated..!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Orientation Sensor De-Activated..!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        pToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(pToggle.isChecked()){
+                    Sensor pro = sensorMan.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+                    if(pro !=null){
+                        sensorMan.registerListener((SensorEventListener) MainActivity.this, pro, SensorManager.SENSOR_DELAY_NORMAL);
+                        Toast.makeText(MainActivity.this, "Proximity Sensor Activated..!", Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        Log.i("Proximity-check","Proximity NOT Supported!!");
+                    }
+                }
+                else{
+                    sensorMan.unregisterListener(MainActivity.this, sensorMan.getDefaultSensor(Sensor.TYPE_PROXIMITY));
+                    proxVal.setText("0");
+
+                    //Line Chart
+                    ArrayList<Entry> values2 = new ArrayList<>();
+                    values2.add(new Entry(1, proxi[9]));
+                    values2.add(new Entry(2, proxi[8]));
+                    values2.add(new Entry(3, proxi[7]));
+                    values2.add(new Entry(4, proxi[6]));
+                    values2.add(new Entry(5, proxi[5]));
+                    values2.add(new Entry(6, proxi[4]));
+                    values2.add(new Entry(7, proxi[3]));
+                    values2.add(new Entry(8, proxi[2]));
+                    values2.add(new Entry(9, proxi[1]));
+                    values2.add(new Entry(10, proxi[0]));
+
+                    //dummy data
+//                    values.add(new Entry(1, 3));
+//                    values.add(new Entry(2, 5));
+//                    values.add(new Entry(3, 4));
+//                    values.add(new Entry(4, 6));
+//                    values.add(new Entry(5, 3));
+//                    values.add(new Entry(6, 5));
+//                    values.add(new Entry(7, 4));
+//                    values.add(new Entry(8, 6));
+//                    values.add(new Entry(9, 3));
+//                    values.add(new Entry(10, 5));
+
+
+
+                    LineDataSet set2;
+                    if (pLineChart.getData() != null &&
+                            pLineChart.getData().getDataSetCount() > 0) {
+                        set2 = (LineDataSet) pLineChart.getData().getDataSetByIndex(0);
+                        set2.setValues(values2);
+                        pLineChart.getData().notifyDataChanged();
+                        pLineChart.notifyDataSetChanged();
+                        pLineChart.getDescription().setEnabled(false);
+                    } else {
+                        set2 = new LineDataSet(values2, "Sample Data");
+                        set2.setDrawIcons(false);
+                        set2.enableDashedLine(10f, 5f, 0f);
+                        set2.enableDashedHighlightLine(10f, 5f, 0f);
+                        set2.setColor(Color.DKGRAY);
+                        set2.setCircleColor(Color.DKGRAY);
+                        set2.setLineWidth(1f);
+                        set2.setCircleRadius(3f);
+                        set2.setDrawCircleHole(false);
+                        set2.setValueTextSize(9f);
+                        set2.setDrawFilled(true);
+                        set2.setFormLineWidth(1f);
+                        set2.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
+                        set2.setFormSize(15.f);
+                        if (Utils.getSDKInt() >= 18) {
+                            Drawable drawable = ContextCompat.getDrawable(MainActivity.this, android.R.color.holo_orange_light);
+                            set2.setFillDrawable(drawable);
+                        } else {
+                            set2.setFillColor(Color.DKGRAY);
+                        }
+                        ArrayList<ILineDataSet> dataSets2 = new ArrayList<>();
+                        dataSets2.add(set2);
+                        LineData data2 = new LineData(dataSets2);
+                        pLineChart.setData(data2);
+                    }
+                    Toast.makeText(MainActivity.this, "Proximity Sensor De-Activated..!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -491,8 +578,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
         else if(sen.getType() == Sensor.TYPE_ORIENTATION){
-            Log.i("Value-check", "Magnetic Field X-axis:" + sensorEvent.values[0] + "Y-axis:" + sensorEvent.values[1]
-                    + "Z-axis:" + sensorEvent.values[2]);
+            Log.i("Value-check", "Orientation X-axis:" + sensorEvent.values[1] + "Y-axis:" + sensorEvent.values[2]
+                    + "Z-axis:" + sensorEvent.values[0]);
 
             //Database related
             MFDatabase mfdb = MFDatabase.getInstance(MainActivity.this);
@@ -512,8 +599,33 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
 
 
-            Log.i("MagneticField Output : ",outputMf);
+            Log.i("Orientation Output : ",outputMf);
 
+        }
+
+        else if(sen.getType() == Sensor.TYPE_PROXIMITY){
+            Log.i("Value-check", "Proximity:" + sensorEvent.values[0]);
+
+            //Database related
+            proxDatabase prdb = proxDatabase.getInstance(MainActivity.this);
+            Proximity proximity = new Proximity(sensorEvent.values[0]);
+            prdb.proxDAO().insert(proximity);
+
+            // Get List
+            List<Proximity> pEntries = prdb.proxDAO().getLast10();
+
+            for(int k=0;k<10;k++){
+                proxi[k]=sensorEvent.values[0];
+            }
+
+            String outputPr = "";
+            for(Proximity p : pEntries)
+            {
+                outputPr += Integer.toString(p.getId()) + " " + Float.toString(p.getProx()) + "\n";
+                proxVal.setText(Float.toString(p.getProx()));
+            }
+
+            Log.i("Proximity Output : ",outputPr);
         }
     }
 
