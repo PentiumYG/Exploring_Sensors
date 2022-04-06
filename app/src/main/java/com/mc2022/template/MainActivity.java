@@ -44,9 +44,11 @@ import com.github.mikephil.charting.utils.Utils;
 import com.mc2022.template.databases.GyroDatabase;
 import com.mc2022.template.databases.LADatabase;
 import com.mc2022.template.databases.LightDatabase;
+import com.mc2022.template.databases.LocDatabase;
 import com.mc2022.template.databases.MFDatabase;
 import com.mc2022.template.databases.TempDatabase;
 import com.mc2022.template.databases.proxDatabase;
+import com.mc2022.template.modelClasses.CurrentLocation;
 import com.mc2022.template.modelClasses.Gyroscope;
 import com.mc2022.template.modelClasses.Light;
 import com.mc2022.template.modelClasses.LinearAcceleration;
@@ -62,9 +64,14 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
     TextView gyroX, gyroY, gyroZ, tempVal, lightVal, orietZ, orietX, orietY, lVal, loVal, laValX, laValY, laValZ, proxVal, nameVal, addrVal, accelS;
-    ToggleButton gToggle, laToggle, tToggle, lToggle, pToggle, oToggle, gpsToggle;
+    ToggleButton gToggle, laToggle, tToggle, lToggle, pToggle, oToggle, gpsToggle, fgpsToggle;
     LocationManager locManager;
     LocationListener locLis;
+    LocationManager flocManager;
+    LocationListener flocLis;
+    
+    TextView fnameValue1, fnameValue2, fnameValue3, flatValue1, flatValue2, flatValue3, flongValue1, flongValue2, flongValue3;
+    TextView faddValue1, faddValue2, faddValue3;
 
     LineChart laLineChart, pLineChart;
 
@@ -80,11 +87,115 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
 
 
+    class FindLL implements LocationListener {
+        @Override
+        public void onProviderDisabled(@NonNull String provider) {
+            LocationListener.super.onProviderDisabled(provider);
+        }
+
+        @Override
+        public void onLocationChanged(@NonNull Location location) {
+
+            Log.i("Check","Checked*****:***********");
+
+            double latitude = location.getLatitude();
+            double longitude = location.getLongitude();
+
+            LocDatabase locDObj = LocDatabase.getInstance(getApplicationContext());
+
+            // Get List
+            List<CurrentLocation> locEntries = locDObj.locDAO().getList();
+            CurrentLocation f1 = null, f2 = null, f3 = null;
+            float mini1 = Float.MAX_VALUE, mini2 = Float.MAX_VALUE, mini3 = Float.MAX_VALUE;
+            //String output = "";
+            for(CurrentLocation cl : locEntries)
+            {
+                float[] results = new float[1];
+                Location.distanceBetween(latitude, longitude, cl.getUserlatitude(), cl.getUserlongitude(), results);
+                float distance = results[0];
+
+                if(distance < mini1 && !(cl.getUserlatitude() == latitude && cl.getUserlongitude()==longitude)){
+                    f1 = cl;
+                    mini1 = distance;
+                }
+
+                //output += Integer.toString(m.getId()) + " " + m.getLatitude()+" "+m.getLongitude()+" "+m.getAddress() +"\n";
+            }
+
+
+
+            if(f1 != null) {
+                Log.i("\nNearby Location 1 : ","Distance = "+mini1+"*"+
+                        f1.getId()+"*\n"+
+                        f1.getUserlatitude()+"*\n"+
+                        f1.getUserlongitude()+"*\n"+
+                        f1.getUseraddress());
+
+
+                flatValue1.setText(Double.toString(f1.getUserlatitude()));
+                flongValue1.setText(Double.toString(f1.getUserlongitude()));
+                fnameValue1.setText(f1.getUsername());
+                faddValue1.setText(f1.getUseraddress());
+
+                for (CurrentLocation cl : locEntries) {
+                    float[] results = new float[1];
+                    Location.distanceBetween(latitude, longitude, cl.getUserlatitude(), cl.getUserlongitude(), results);
+                    float distance = results[0];
+                    if (distance < mini2 && cl.getId() != f1.getId()
+                            && !(cl.getUserlatitude() == latitude && cl.getUserlongitude()==longitude)
+                            && !(cl.getUserlatitude() == f1.getUserlatitude() && cl.getUserlongitude()==f1.getUserlongitude())) {
+                        f2 = cl;
+                        mini2 = distance;
+                    }
+                    //output += Integer.toString(m.getId()) + " " + m.getLatitude() + " " + m.getLongitude() + " " + m.getAddress() + "\n";
+                }
+
+
+            }
+
+            if(f2 != null) {
+                flatValue2.setText(Double.toString(f2.getUserlatitude()));
+                flongValue2.setText(Double.toString(f2.getUserlongitude()));
+                fnameValue2.setText(f2.getUsername());
+                faddValue2.setText(f2.getUseraddress());
+
+                for (CurrentLocation cl : locEntries) {
+                    float[] results = new float[1];
+                    Location.distanceBetween(latitude, longitude, cl.getUserlatitude(), cl.getUserlongitude(), results);
+                    float distance = results[0];
+                    if (distance < mini3 && cl.getId() != f1.getId() && cl.getId() != f2.getId()
+                            && !(cl.getUserlatitude() == latitude && cl.getUserlatitude()==longitude)
+                            && !(cl.getUserlatitude() == f1.getUserlatitude() && cl.getUserlongitude()==f1.getUserlongitude())
+                            && !(cl.getUserlatitude() == f2.getUserlatitude() && cl.getUserlongitude()==f2.getUserlongitude())) {
+                        f3 = cl;
+                        mini3 = distance;
+                    }
+                    //output += Integer.toString(m.getId()) + " " + m.getLatitude() + " " + m.getLongitude() + " " + m.getAddress() + "\n";
+                }
+                if(f3!=null){
+                    flatValue3.setText(Double.toString(f3.getUserlatitude()));
+                    flongValue3.setText(Double.toString(f3.getUserlongitude()));
+                    fnameValue3.setText(f3.getUsername());
+                    faddValue3.setText(f3.getUseraddress());
+                }
+
+            }
+
+        }
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
+    }
 
     class LocationFunc implements LocationListener{
 
         @Override
         public void onLocationChanged(@NonNull Location location) {
+
+            LocDatabase locDatabase = LocDatabase.getInstance(getApplicationContext());
+
+
+
             lVal.setText(String.valueOf(location.getLatitude()));
             loVal.setText(String.valueOf(location.getLongitude()));
 
@@ -102,6 +213,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 addrVal.setText(addresses.get(0).getFeatureName() + ", " + addresses.get(0).getLocality() + ", " + addresses.get(0).getAdminArea() + ", " + addresses.get(0).getCountryName());
                 nameVal.setText(addresses.get(0).getFeatureName() + ", " + addresses.get(0).getLocality());
             }
+
+            CurrentLocation currentLocation = new CurrentLocation(addresses.get(0).getFeatureName() + ", " + addresses.get(0).getLocality(),addresses.get(0).getFeatureName() + ", " + addresses.get(0).getLocality() + ", " + addresses.get(0).getAdminArea() + ", " + addresses.get(0).getCountryName(), location.getLatitude(), location.getLongitude());
+            locDatabase.locDAO().insert(currentLocation);
         }
 
         @Override
@@ -113,6 +227,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         public void onStatusChanged(String provider, int status, Bundle extras) {
         }
     }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,6 +255,23 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         accelS = (TextView) findViewById(R.id.accelSen);
 
 
+        fnameValue1 = (TextView) findViewById(R.id.fnameValue1);
+        fnameValue2 = (TextView) findViewById(R.id.fnameValue2);
+        fnameValue3 = (TextView) findViewById(R.id.fnameValue3);
+        faddValue1 = (TextView) findViewById(R.id.faddValue1);
+        faddValue2 = (TextView) findViewById(R.id.faddValue2);
+        faddValue3 = (TextView) findViewById(R.id.faddValue3);
+        flatValue1 = (TextView) findViewById(R.id.flatValue1);
+        flatValue2 = (TextView) findViewById(R.id.flatValue2);
+        flatValue3 = (TextView) findViewById(R.id.flatValue3);
+        flongValue1 = (TextView) findViewById(R.id.flongValue1);
+        flongValue2 = (TextView) findViewById(R.id.flongValue2);
+        flongValue3 = (TextView) findViewById(R.id.flongValue3);
+        
+        
+        
+
+
         //ToggleButton initialization
         gToggle = (ToggleButton) findViewById(R.id.Gtoggle);
         laToggle = (ToggleButton) findViewById(R.id.LAtoggle);
@@ -147,6 +280,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         pToggle = (ToggleButton) findViewById(R.id.Ptoggle);
         oToggle = (ToggleButton) findViewById(R.id.Otoggle);
         gpsToggle = (ToggleButton) findViewById(R.id.gpsToggle);
+        fgpsToggle = (ToggleButton) findViewById(R.id.fgpsToggle1);
 
 
         laLineChart = (LineChart) findViewById(R.id.laLineChart);
@@ -506,6 +640,28 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         });
 
+        fgpsToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(fgpsToggle.isChecked()){
+                    if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+                    {
+                        ActivityCompat.requestPermissions(MainActivity.this,new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION},1);
+                    }
+                    else {
+                        flocManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                        flocLis = new FindLL();
+                        flocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 1, flocLis);
+                        Toast.makeText(MainActivity.this, "Find GPS Activated..!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else{
+                    flocManager.removeUpdates(flocLis);
+                    Toast.makeText(MainActivity.this, "Find GPS De-Activated..!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
 
 
 
@@ -576,7 +732,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             ldb.lightDAO().insert(light);
 
             //
-            if(light.getLight() > 3000){
+            if(light.getLight() < 1500){
                 uiModeManager.setNightMode(UiModeManager.MODE_NIGHT_YES);
             }
             else{
@@ -666,7 +822,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
 
 
-            Log.i("LinearAcc Output : ",outputLA);
+//            Log.i("LinearAcc Output : ",outputLA);
 
 
 
@@ -800,5 +956,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public void onAccuracyChanged(Sensor sensor, int i) {
 
     }
+    
+    
+    
+    
 
 }
