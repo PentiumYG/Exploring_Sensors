@@ -26,3 +26,11 @@ phone.
 8. Bonus: Start collecting sensor data when the phone screen is placed
 upwards and stop collecting data when the screen is placed downwards on
 a surface.
+
+## Screenshots
+<p>
+  <img src="https://github.com/PentiumYG/Exploring_Sensors/blob/Assignment-4/Screenshot-1.jpeg" width="200" title="Main_Activity">
+  <img src="https://github.com/PentiumYG/Exploring_Sensors/blob/Assignment-4/Screenshot-2.jpeg" width="200" title="Main_Activity">
+  <img src="https://github.com/PentiumYG/Exploring_Sensors/blob/Assignment-4/Screenshot-3.jpeg" width="200" title="Main_Activity">
+  <img src="https://github.com/PentiumYG/Exploring_Sensors/blob/Assignment-4/Screenshot-4.jpeg" width="200" title="Main_Activity">
+</p>
