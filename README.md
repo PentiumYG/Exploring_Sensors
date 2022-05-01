@@ -1,6 +1,6 @@
-# MC Assignment 4: Exploring - Sensors
+# Exploring - Sensors
 
-1. Collect sensor data along with the timestamp for the following sensors and
+1. Collected sensor data along with the timestamp for the following sensors and
 store them in a room database in a separate table for each sensor. Have UI
 control in terms of toggle buttons to start and stop collection. \
 a. Motion sensor - Gyroscope, Linear acceleration \
